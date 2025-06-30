@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Penalty Shootout Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .team {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+    .player {
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    button {
+      margin: 5px 5px 5px 0;
+      padding: 8px 12px;
+      font-size: 1em;
+    }
+    .score {
+      font-size: 1.5em;
+      text-align: center;
+    }
+    #resetButton {
+      margin: 30px auto;
+      display: block;
+      padding: 10px 20px;
+      font-size: 1em;
+    }
+    select, label {
+      font-size: 1em;
+      margin: 10px 0;
+      display: block;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h1>เว็บไซต์นับแต้มยิงจุดโทษ</h1>
+
+  <div>
+    <label for="teamAName">เลือกชื่อทีม A: </label>
+    <select id="teamAName" onchange="updateTeamName('A')">
+      <option value="ทีม A">ทีม A</option>
+      <option value="Barcelocara888">Barcelocara888</option>
+      <option value="Tok Tok">Tok Tok</option>
+      <option value="Songglod United">Songglod United</option>
+      <option value="โอลต์ บอย เปรน">โอลต์ บอย เปรน</option>
+      <option value="PTD Team">PTD Team</option>
+      <option value="Interior FC">Interior FC</option>
+      <option value="BFT Team">BFT Team</option>
+      <option value="ย่อมาปิงมะหวิ่งนองนอย">ย่อมาปิงมะหวิ่งนองนอย</option>
+      <option value="พายุหอยหมี">พายุหอยหมี</option>
+      <option value="VMD DREAM TEAM">VMD DREAM TEAM</option>
+      <option value="ปลาเข็งต้มเค็ม">ปลาเข็งต้มเค็ม</option>
+      <option value="Henz F.C.">Henz F.C.</option>
+    </select>
+  </div>
+  <div class="team" id="teamA">
+    <h2 id="titleA">ทีม A</h2>
+    <div id="playersA"></div>
+    <p class="score">คะแนน: <span id="scoreA">0</span></p>
+  </div>
+
+  <div>
+    <label for="teamBName">เลือกชื่อทีม B: </label>
+    <select id="teamBName" onchange="updateTeamName('B')">
+      <option value="ทีม B">ทีม B</option>
+      <option value="Barcelocara888">Barcelocara888</option>
+      <option value="Tok Tok">Tok Tok</option>
+      <option value="Songglod United">Songglod United</option>
+      <option value="โอลต์ บอย เปรน">โอลต์ บอย เปรน</option>
+      <option value="PTD Team">PTD Team</option>
+      <option value="Interior FC">Interior FC</option>
+      <option value="BFT Team">BFT Team</option>
+      <option value="ย่อมาปิงมะหวิ่งนองนอย">ย่อมาปิงมะหวิ่งนองนอย</option>
+      <option value="พายุหอยหมี">พายุหอยหมี</option>
+      <option value="VMD DREAM TEAM">VMD DREAM TEAM</option>
+      <option value="ปลาเข็งต้มเค็ม">ปลาเข็งต้มเค็ม</option>
+      <option value="Henz F.C.">Henz F.C.</option>
+    </select>
+  </div>
+  <div class="team" id="teamB">
+    <h2 id="titleB">ทีม B</h2>
+    <div id="playersB"></div>
+    <p class="score">คะแนน: <span id="scoreB">0</span></p>
+  </div>
+
+  <button id="resetButton" onclick="resetGame()">รีเซ็ตเกม</button>
+
+  <script>
+    const playersPerTeam = 5;
+    const teams = ['A', 'B'];
+    let scores = { A: 0, B: 0 };
+    let results = { A: {}, B: {} };
+
+    function createPlayerButtons(teamId) {
+      const container = document.getElementById(`players${teamId}`);
+      container.innerHTML = '';
+      results[teamId] = {};
+      for (let i = 1; i <= playersPerTeam; i++) {
+        const playerDiv = document.createElement('div');
+        playerDiv.className = 'player';
+        playerDiv.innerHTML = `
+          ผู้เล่น ${i}: 
+          <button onclick="recordShot('${teamId}', ${i}, true)">ยิงเข้า</button>
+          <button onclick="recordShot('${teamId}', ${i}, false)">ยิงไม่เข้า</button>
+          <span id="result${teamId}${i}"></span>
+        `;
+        container.appendChild(playerDiv);
+      }
+    }
+
+    function recordShot(teamId, playerNum, isGoal) {
+      const resultKey = `${teamId}${playerNum}`;
+      const previous = results[teamId][playerNum];
+      const resultSpan = document.getElementById(`result${resultKey}`);
+
+      if (previous === isGoal) return; // same choice, do nothing
+
+      if (previous !== undefined) {
+        if (previous) scores[teamId]--;
+        else if (isGoal) scores[teamId]++;
+      } else if (isGoal) {
+        scores[teamId]++;
+      }
+
+      results[teamId][playerNum] = isGoal;
+      resultSpan.textContent = isGoal ? '✅' : '❌';
+      document.getElementById(`score${teamId}`).textContent = scores[teamId];
+    }
+
+    function updateTeamName(teamId) {
+      const name = document.getElementById(`team${teamId}Name`).value;
+      document.getElementById(`title${teamId}`).textContent = name;
+    }
+
+    function resetGame() {
+      scores = { A: 0, B: 0 };
+      results = { A: {}, B: {} };
+      document.getElementById('scoreA').textContent = '0';
+      document.getElementById('scoreB').textContent = '0';
+      document.getElementById('teamAName').value = 'ทีม A';
+      document.getElementById('teamBName').value = 'ทีม B';
+      document.getElementById('titleA').textContent = 'ทีม A';
+      document.getElementById('titleB').textContent = 'ทีม B';
+      teams.forEach(createPlayerButtons);
+    }
+
+    teams.forEach(createPlayerButtons);
+  </script>
+</body>
+</html>
