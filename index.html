@@ -81,7 +81,8 @@
       <option>ปลาเข็งต้มเค็ม</option>
       <option>Henz F.C.</option>
     </select>
-  </div>
+    </div>
+    </div>
     <button onclick="startGame()">เริ่ม</button>
   </div>
 
@@ -111,14 +112,14 @@
           <tr class="player">
             <td>${teamA}</td>
             ${[0,1,2,3,4].map(i => `<td><span id="resultA${i}"></span><br>
-              <button class="result-button" onclick="recordResult(0, ${i}, true)">✅</button>
-              <button class="result-button" onclick="recordResult(0, ${i}, false)">❌</button></td>`).join('')}
+              <button class="result-button" onclick="recordResult(0, ${i}, true)">GOAL</button>
+              <button class="result-button" onclick="recordResult(0, ${i}, false)">NO GOAL</button></td>`).join('')}
           </tr>
           <tr class="player">
             <td>${teamB}</td>
             ${[0,1,2,3,4].map(i => `<td><span id="resultB${i}"></span><br>
-              <button class="result-button" onclick="recordResult(1, ${i}, true)">✅</button>
-              <button class="result-button" onclick="recordResult(1, ${i}, false)">❌</button></td>`).join('')}
+              <button class="result-button" onclick="recordResult(1, ${i}, true)">GOAL</button>
+              <button class="result-button" onclick="recordResult(1, ${i}, false)">NO GOAL</button></td>`).join('')}
           </tr>
         </table>
       `;
