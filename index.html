@@ -27,17 +27,17 @@
     }
     button {
       margin: 5px 5px 5px 0;
-      padding: 8px 12px;
-      font-size: 1em;
+      padding: 6px 10px;
+      font-size: 0.9em;
     }
     .score {
-      font-size: 1.5em;
+      font-size: 1.2em;
       text-align: center;
     }
-    #resetButton {
-      margin: 30px auto;
+    #resetButton, #confirmButton, #resetDataButton {
+      margin: 10px auto;
       display: block;
-      padding: 10px 20px;
+      padding: 8px 16px;
       font-size: 1em;
     }
     select, label {
@@ -46,10 +46,16 @@
       display: block;
       width: 100%;
     }
+    #summary, #history {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 1em;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <h1>TMA Penalty Competition</h1>
+  <h1>เว็บไซต์นับแต้มยิงจุดโทษ</h1>
 
   <div>
     <label for="teamAName">เลือกชื่อทีม A: </label>
@@ -58,11 +64,11 @@
       <option value="Barcelocara888">Barcelocara888</option>
       <option value="Tok Tok">Tok Tok</option>
       <option value="Songglod United">Songglod United</option>
-      <option value="โอลต์ บอย เปรน">โอลต์ บอย เปรน</option>
+      <option value="โอลต์ บอย เบิร์น">โอลต์ บอย เปรน</option>
       <option value="PTD Team">PTD Team</option>
       <option value="Interior FC">Interior FC</option>
       <option value="BFT Team">BFT Team</option>
-      <option value="ย่อมาปิงมะหวิ่งนองนอย">ย่อมาปิงมะหวิ่งนองนอย</option>
+      <option value="ย่อมายิงมะทิงนองนอย">ย่อมาปิงมะหวิ่งนองนอย</option>
       <option value="พายุหอยหมี">พายุหอยหมี</option>
       <option value="VMD DREAM TEAM">VMD DREAM TEAM</option>
       <option value="ปลาเข็งต้มเค็ม">ปลาเข็งต้มเค็ม</option>
@@ -82,11 +88,11 @@
       <option value="Barcelocara888">Barcelocara888</option>
       <option value="Tok Tok">Tok Tok</option>
       <option value="Songglod United">Songglod United</option>
-      <option value="โอลต์ บอย เปรน">โอลต์ บอย เปรน</option>
+      <option value="โอลต์ บอย เบิร์น">โอลต์ บอย เปรน</option>
       <option value="PTD Team">PTD Team</option>
       <option value="Interior FC">Interior FC</option>
       <option value="BFT Team">BFT Team</option>
-      <option value="ย่อมาปิงมะหวิ่งนองนอย">ย่อมาปิงมะหวิ่งนองนอย</option>
+      <option value="ย่อมายิงมะทิงนองนอย">ย่อมาปิงมะหวิ่งนองนอย</option>
       <option value="พายุหอยหมี">พายุหอยหมี</option>
       <option value="VMD DREAM TEAM">VMD DREAM TEAM</option>
       <option value="ปลาเข็งต้มเค็ม">ปลาเข็งต้มเค็ม</option>
@@ -99,13 +105,18 @@
     <p class="score">คะแนน: <span id="scoreB">0</span></p>
   </div>
 
+  <p id="summary">สรุปคะแนน: ทีม A 0 : 0 ทีม B</p>
+  <button id="confirmButton" onclick="confirmResult()">ยืนยันผลการแข่งขัน</button>
+  <div id="history"></div>
   <button id="resetButton" onclick="resetGame()">รีเซ็ตเกม</button>
+  <button id="resetDataButton" onclick="resetHistory()">ล้างข้อมูลที่เก็บ</button>
 
   <script>
     const playersPerTeam = 5;
     const teams = ['A', 'B'];
     let scores = { A: 0, B: 0 };
     let results = { A: {}, B: {} };
+    let history = [];
 
     function createPlayerButtons(teamId) {
       const container = document.getElementById(`players${teamId}`);
@@ -129,7 +140,7 @@
       const previous = results[teamId][playerNum];
       const resultSpan = document.getElementById(`result${resultKey}`);
 
-      if (previous === isGoal) return; // same choice, do nothing
+      if (previous === isGoal) return;
 
       if (previous !== undefined) {
         if (previous) scores[teamId]--;
@@ -141,11 +152,37 @@
       results[teamId][playerNum] = isGoal;
       resultSpan.textContent = isGoal ? '✅' : '❌';
       document.getElementById(`score${teamId}`).textContent = scores[teamId];
+      updateSummary();
     }
 
     function updateTeamName(teamId) {
       const name = document.getElementById(`team${teamId}Name`).value;
       document.getElementById(`title${teamId}`).textContent = name;
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const nameA = document.getElementById('teamAName').value;
+      const nameB = document.getElementById('teamBName').value;
+      const scoreA = scores.A;
+      const scoreB = scores.B;
+      document.getElementById('summary').textContent = `สรุปคะแนน: ${nameA} ${scoreA} : ${scoreB} ${nameB}`;
+    }
+
+    function confirmResult() {
+      const nameA = document.getElementById('teamAName').value;
+      const nameB = document.getElementById('teamBName').value;
+      const scoreA = scores.A;
+      const scoreB = scores.B;
+      const result = `${nameA} ${scoreA} : ${scoreB} ${nameB}`;
+      history.push(result);
+      updateHistory();
+      resetGame();
+    }
+
+    function updateHistory() {
+      const historyDiv = document.getElementById('history');
+      historyDiv.innerHTML = '<h2>ประวัติผลการแข่งขัน</h2>' + history.map(r => `<div>${r}</div>`).join('');
     }
 
     function resetGame() {
@@ -157,7 +194,13 @@
       document.getElementById('teamBName').value = 'ทีม B';
       document.getElementById('titleA').textContent = 'ทีม A';
       document.getElementById('titleB').textContent = 'ทีม B';
+      document.getElementById('summary').textContent = 'สรุปคะแนน: ทีม A 0 : 0 ทีม B';
       teams.forEach(createPlayerButtons);
+    }
+
+    function resetHistory() {
+      history = [];
+      updateHistory();
     }
 
     teams.forEach(createPlayerButtons);
