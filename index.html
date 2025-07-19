@@ -104,12 +104,11 @@
     <div id="playersB"></div>
     <p class="score">คะแนน: <span id="scoreB">0</span></p>
   </div>
-
+  <button id="resetButton" onclick="resetGame()">รีเซ็ตเกม</button>
   <p id="summary">สรุปคะแนน: ทีม A 0 : 0 ทีม B</p>
   <button id="confirmButton" onclick="confirmResult()">ยืนยันผลการแข่งขัน</button>
   <div id="history"></div>
-  <button id="resetButton" onclick="resetGame()">รีเซ็ตเกม</button>
-  <button id="resetDataButton" onclick="resetHistory()">ล้างข้อมูลที่เก็บ</button>
+  <button id="resetDataButton" onclick="resetHistory()">ล้างประวัติการเเข่งขัน</button>
 
   <script>
     const playersPerTeam = 5;
