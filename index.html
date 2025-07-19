@@ -62,7 +62,7 @@
       <option>VMD DREAM TEAM</option>
       <option>ปลาเข็งต้มเค็ม</option>
       <option>Henz F.C.</option>
-    </select>
+    </select/>
     <label>ทีม B: </label>
     <select id="teamB">
      <option>Barcelocara888</option>
@@ -77,7 +77,7 @@
       <option>VMD DREAM TEAM</option>
       <option>ปลาเข็งต้มเค็ม</option>
       <option>Henz F.C.</option>
-    </select>
+    </select/>
     <button onclick="startGame()">เริ่ม</button>
   </div>
 
@@ -144,7 +144,7 @@
       const teamA = document.getElementById('teamA').value;
       const teamB = document.getElementById('teamB').value;
       history.push(`▶️ ${teamA} ${scoreA} : ${scoreB} ${teamB}`);
-      document.getElementById('history').innerHTML = '<h3>ผลรวม:</h3>' + history.map(h => `<div>${h}</div>`).join('');
+      document.getElementById('history').innerHTML = '<h3>สรุปผลการเเข่งขัน:</h3>' + history.map(h => `<div>${h}</div>`).join('');
       resetGame();
     }
 
