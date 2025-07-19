@@ -7,202 +7,144 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
-      margin: 0;
+      padding: 10px;
+      max-width: 600px;
+      margin: auto;
     }
     h1, h2 {
       text-align: center;
     }
-    .team {
-      margin-bottom: 20px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
+    select, button {
+      font-size: 16px;
+      margin: 5px;
     }
-    .player {
-      margin-bottom: 5px;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-    }
-    button {
-      margin: 5px 5px 5px 0;
-      padding: 6px 10px;
-      font-size: 0.9em;
-    }
-    .score {
-      font-size: 1.2em;
-      text-align: center;
-    }
-    #resetButton, #confirmButton, #resetDataButton {
-      margin: 10px auto;
-      display: block;
-      padding: 8px 16px;
-      font-size: 1em;
-    }
-    select, label {
-      font-size: 1em;
-      margin: 10px 0;
-      display: block;
+    table {
       width: 100%;
-    }
-    #summary, #history {
-      text-align: center;
+      border-collapse: collapse;
       margin-top: 20px;
-      font-size: 1em;
-      font-weight: bold;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    .result-button {
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+      padding: 0;
+      margin: 2px;
+      text-align: center;
+      line-height: 1;
+    }
+    .player span {
+      width: 30px;
+      display: inline-block;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <h1>เว็บไซต์นับแต้มยิงจุดโทษ</h1>
+  <h1>ยิงจุดโทษ</h1>
 
-  <div>
-    <label for="teamAName">เลือกชื่อทีม A: </label>
-    <select id="teamAName" onchange="updateTeamName('A')">
-      <option value="ทีม A">ทีม A</option>
-      <option value="Barcelocara888">Barcelocara888</option>
-      <option value="Tok Tok">Tok Tok</option>
-      <option value="Songglod United">Songglod United</option>
-      <option value="โอลต์ บอย เบิร์น">โอลต์ บอย เปรน</option>
-      <option value="PTD Team">PTD Team</option>
-      <option value="Interior FC">Interior FC</option>
-      <option value="BFT Team">BFT Team</option>
-      <option value="ย่อมายิงมะทิงนองนอย">ย่อมาปิงมะหวิ่งนองนอย</option>
-      <option value="พายุหอยหมี">พายุหอยหมี</option>
-      <option value="VMD DREAM TEAM">VMD DREAM TEAM</option>
-      <option value="ปลาเข็งต้มเค็ม">ปลาเข็งต้มเค็ม</option>
-      <option value="Henz F.C.">Henz F.C.</option>
+  <div style="text-align: center;">
+    <label>ทีม A: </label>
+    <select id="teamA">
+      <option>Brazil</option>
+      <option>Argentina</option>
+      <option>France</option>
+      <option>Japan</option>
+      <option>Thailand</option>
     </select>
-  </div>
-  <div class="team" id="teamA">
-    <h2 id="titleA">ทีม A</h2>
-    <div id="playersA"></div>
-    <p class="score">คะแนน: <span id="scoreA">0</span></p>
+    <label>ทีม B: </label>
+    <select id="teamB">
+      <option>Brazil</option>
+      <option>Argentina</option>
+      <option>France</option>
+      <option>Japan</option>
+      <option>Thailand</option>
+    </select>
+    <button onclick="startGame()">เริ่ม</button>
   </div>
 
-  <div>
-    <label for="teamBName">เลือกชื่อทีม B: </label>
-    <select id="teamBName" onchange="updateTeamName('B')">
-      <option value="ทีม B">ทีม B</option>
-      <option value="Barcelocara888">Barcelocara888</option>
-      <option value="Tok Tok">Tok Tok</option>
-      <option value="Songglod United">Songglod United</option>
-      <option value="โอลต์ บอย เบิร์น">โอลต์ บอย เปรน</option>
-      <option value="PTD Team">PTD Team</option>
-      <option value="Interior FC">Interior FC</option>
-      <option value="BFT Team">BFT Team</option>
-      <option value="ย่อมายิงมะทิงนองนอย">ย่อมาปิงมะหวิ่งนองนอย</option>
-      <option value="พายุหอยหมี">พายุหอยหมี</option>
-      <option value="VMD DREAM TEAM">VMD DREAM TEAM</option>
-      <option value="ปลาเข็งต้มเค็ม">ปลาเข็งต้มเค็ม</option>
-      <option value="Henz F.C.">Henz F.C.</option>
-    </select>
+  <div id="gameArea"></div>
+
+  <div style="text-align: center; margin-top: 20px;">
+    <button onclick="confirmResult()">ยืนยันผล</button>
+    <button onclick="resetGame()">รีเซ็ตเกม</button>
+    <button onclick="resetHistory()">รีเซ็ตผลรวม</button>
   </div>
-  <div class="team" id="teamB">
-    <h2 id="titleB">ทีม B</h2>
-    <div id="playersB"></div>
-    <p class="score">คะแนน: <span id="scoreB">0</span></p>
-  </div>
-  <button id="resetButton" onclick="resetGame()">รีเซ็ตเกม</button>
-  <p id="summary">สรุปคะแนน: ทีม A 0 : 0 ทีม B</p>
-  <button id="confirmButton" onclick="confirmResult()">ยืนยันผลการแข่งขัน</button>
+
+  <h2 id="summary"></h2>
   <div id="history"></div>
-  <button id="resetDataButton" onclick="resetHistory()">ล้างประวัติการเเข่งขัน</button>
 
   <script>
-    const playersPerTeam = 5;
-    const teams = ['A', 'B'];
-    let scores = { A: 0, B: 0 };
-    let results = { A: {}, B: {} };
+    let results = [[null, null, null, null, null], [null, null, null, null, null]];
     let history = [];
 
-    function createPlayerButtons(teamId) {
-      const container = document.getElementById(`players${teamId}`);
-      container.innerHTML = '';
-      results[teamId] = {};
-      for (let i = 1; i <= playersPerTeam; i++) {
-        const playerDiv = document.createElement('div');
-        playerDiv.className = 'player';
-        playerDiv.innerHTML = `
-          ผู้เล่น ${i}: 
-          <button onclick="recordShot('${teamId}', ${i}, true) style="width: 40px; height: 40px;">GOAL</button>
-          <button onclick="recordShot('${teamId}', ${i}, false) style="width: 40px; height: 40px;">NO GOAL</button>
-          <span id="result${teamId}${i}"></span>
-        `;
-        container.appendChild(playerDiv);
-      }
-    }
+    function startGame() {
+      const teamA = document.getElementById('teamA').value;
+      const teamB = document.getElementById('teamB').value;
 
-    function recordShot(teamId, playerNum, isGoal) {
-      const resultKey = `${teamId}${playerNum}`;
-      const previous = results[teamId][playerNum];
-      const resultSpan = document.getElementById(`result${resultKey}`);
+      document.getElementById('gameArea').innerHTML = `
+        <h2>${teamA} vs ${teamB}</h2>
+        <table>
+          <tr><th>ทีม</th><th>ผู้เล่น 1</th><th>ผู้เล่น 2</th><th>ผู้เล่น 3</th><th>ผู้เล่น 4</th><th>ผู้เล่น 5</th></tr>
+          <tr class="player">
+            <td>${teamA}</td>
+            ${[0,1,2,3,4].map(i => `<td><span id="resultA${i}"></span><br>
+              <button class="result-button" onclick="recordResult(0, ${i}, true)">✅</button>
+              <button class="result-button" onclick="recordResult(0, ${i}, false)">❌</button></td>`).join('')}
+          </tr>
+          <tr class="player">
+            <td>${teamB}</td>
+            ${[0,1,2,3,4].map(i => `<td><span id="resultB${i}"></span><br>
+              <button class="result-button" onclick="recordResult(1, ${i}, true)">✅</button>
+              <button class="result-button" onclick="recordResult(1, ${i}, false)">❌</button></td>`).join('')}
+          </tr>
+        </table>
+      `;
 
-      if (previous === isGoal) return;
-
-      if (previous !== undefined) {
-        if (previous) scores[teamId]--;
-        else if (isGoal) scores[teamId]++;
-      } else if (isGoal) {
-        scores[teamId]++;
-      }
-
-      results[teamId][playerNum] = isGoal;
-      resultSpan.textContent = isGoal ? '✅' : '❌';
-      document.getElementById(`score${teamId}`).textContent = scores[teamId];
+      results = [[null, null, null, null, null], [null, null, null, null, null]];
       updateSummary();
     }
 
-    function updateTeamName(teamId) {
-      const name = document.getElementById(`team${teamId}Name`).value;
-      document.getElementById(`title${teamId}`).textContent = name;
+    function recordResult(teamIndex, playerIndex, isGoal) {
+      results[teamIndex][playerIndex] = isGoal;
+      const spanId = `result${teamIndex === 0 ? 'A' : 'B'}${playerIndex}`;
+      document.getElementById(spanId).textContent = isGoal ? '✅' : '❌';
       updateSummary();
     }
 
     function updateSummary() {
-      const nameA = document.getElementById('teamAName').value;
-      const nameB = document.getElementById('teamBName').value;
-      const scoreA = scores.A;
-      const scoreB = scores.B;
-      document.getElementById('summary').textContent = `สรุปคะแนน: ${nameA} ${scoreA} : ${scoreB} ${nameB}`;
+      const scoreA = results[0].filter(r => r === true).length;
+      const scoreB = results[1].filter(r => r === true).length;
+      const teamA = document.getElementById('teamA').value;
+      const teamB = document.getElementById('teamB').value;
+      document.getElementById('summary').textContent = `สรุปคะแนน: ทีม ${teamA} ${scoreA} : ${scoreB} ทีม ${teamB}`;
     }
 
     function confirmResult() {
-      const nameA = document.getElementById('teamAName').value;
-      const nameB = document.getElementById('teamBName').value;
-      const scoreA = scores.A;
-      const scoreB = scores.B;
-      const result = `${nameA} ${scoreA} : ${scoreB} ${nameB}`;
-      history.push(result);
-      updateHistory();
+      const scoreA = results[0].filter(r => r === true).length;
+      const scoreB = results[1].filter(r => r === true).length;
+      const teamA = document.getElementById('teamA').value;
+      const teamB = document.getElementById('teamB').value;
+      history.push(`▶️ ${teamA} ${scoreA} : ${scoreB} ${teamB}`);
+      document.getElementById('history').innerHTML = '<h3>ผลรวม:</h3>' + history.map(h => `<div>${h}</div>`).join('');
       resetGame();
     }
 
-    function updateHistory() {
-      const historyDiv = document.getElementById('history');
-      historyDiv.innerHTML = '<h2>ผลการแข่งขัน</h2>' + history.map(r => `<div>${r}</div>`).join('');
-    }
-
     function resetGame() {
-      scores = { A: 0, B: 0 };
-      results = { A: {}, B: {} };
-      document.getElementById('scoreA').textContent = '0';
-      document.getElementById('scoreB').textContent = '0';
-      document.getElementById('teamAName').value = 'ทีม A';
-      document.getElementById('teamBName').value = 'ทีม B';
-      document.getElementById('titleA').textContent = 'ทีม A';
-      document.getElementById('titleB').textContent = 'ทีม B';
-      document.getElementById('summary').textContent = 'สรุปคะแนน: ทีม A 0 : 0 ทีม B';
-      teams.forEach(createPlayerButtons);
+      results = [[null, null, null, null, null], [null, null, null, null, null]];
+      updateSummary();
+      const spans = document.querySelectorAll('span[id^="result"]');
+      spans.forEach(span => span.textContent = '');
     }
 
     function resetHistory() {
       history = [];
-      updateHistory();
+      document.getElementById('history').innerHTML = '';
     }
-
-    teams.forEach(createPlayerButtons);
   </script>
 </body>
 </html>
