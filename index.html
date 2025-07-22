@@ -126,8 +126,8 @@
         playerDiv.className = 'player';
         playerDiv.innerHTML = `
           ผู้เล่น ${i}: 
-          <button onclick="recordShot('${teamId}', ${i}, true) style="width: 40px; height: 40px;">GOAL</button>
-          <button onclick="recordShot('${teamId}', ${i}, false) style="width: 40px; height: 40px;">NO GOAL</button>
+          <button onclick="recordShot('${teamId}', ${i}, true)">ยิงเข้า</button>
+          <button onclick="recordShot('${teamId}', ${i}, false)">ยิงไม่เข้า</button>
           <span id="result${teamId}${i}"></span>
         `;
         container.appendChild(playerDiv);
@@ -181,7 +181,7 @@
 
     function updateHistory() {
       const historyDiv = document.getElementById('history');
-      historyDiv.innerHTML = '<h2>ผลการแข่งขัน</h2>' + history.map(r => `<div>${r}</div>`).join('');
+      historyDiv.innerHTML = '<h2>ประวัติผลการแข่งขัน</h2>' + history.map(r => `<div>${r}</div>`).join('');
     }
 
     function resetGame() {
