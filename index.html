@@ -1,31 +1,45 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Penalty Shootout Tracker</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 10px;
+      font-family: sans-serif;
+      padding: 1rem;
       max-width: 600px;
       margin: auto;
     }
     h1, h2 {
       text-align: center;
     }
-    select, button {
-      font-size: 16px;
-      margin: 5px;
+    .team-select {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    select {
+      width: 48%;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    .scoreboard {
+      margin: 1rem 0;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin-bottom: 1rem;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 8px;
+      text-align: center;
+      padding: 0.5rem;
+    }
+    .player span {
+      width: 30px;
+      display: inline-block;
       text-align: center;
     }
     .result-button {
@@ -37,20 +51,18 @@
       text-align: center;
       line-height: 1;
     }
-    .player span {
-      width: 30px;
-      display: inline-block;
-      text-align: center;
+    button {
+      padding: 0.5rem 1rem;
+      margin: 0.25rem;
+      font-size: 1rem;
     }
   </style>
 </head>
 <body>
-  <h1>ยิงจุดโทษ</h1>
+  <h1>Penalty Shootout Tracker</h1>
 
-  <div style="text-align: center;">
-    <label>ทีม A: </label>
+  <div class="team-select">
     <select id="teamA">
-      <option>teamA</option>
       <option>Barcelocara888</option>
       <option>Tok Tok</option>
       <option>Songglod United</option>
@@ -64,11 +76,8 @@
       <option>ปลาเข็งต้มเค็ม</option>
       <option>Henz F.C.</option>
     </select>
-    </div style="text-align: center;">
-    </label>ทีม B: </label>
     <select id="teamB">
-      <option>teamB</option>
-     <option>Barcelocara888</option>
+      <option>Barcelocara888</option>
       <option>Tok Tok</option>
       <option>Songglod United</option>
       <option>โอลต์ บอย เบิร์น</option>
@@ -81,89 +90,95 @@
       <option>ปลาเข็งต้มเค็ม</option>
       <option>Henz F.C.</option>
     </select>
-    </div>
-    </div>
-    <button onclick="startGame()">เริ่ม</button>
   </div>
 
-  <div id="gameArea"></div>
+  <div class="scoreboard">
+    <table>
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th>Player</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody id="scoreTable"></tbody>
+    </table>
+    <p id="scoreSummary"></p>
+  </div>
 
-  <div style="text-align: center; margin-top: 20px;">
+  <div style="text-align:center">
     <button onclick="confirmResult()">ยืนยันผล</button>
     <button onclick="resetGame()">รีเซ็ตเกม</button>
     <button onclick="resetHistory()">รีเซ็ตผลรวม</button>
   </div>
 
-  <h2 id="summary"></h2>
-  <div id="history"></div>
+  <h2>ผลรวมทั้งหมด</h2>
+  <ul id="historyList"></ul>
 
   <script>
-    let results = [[null, null, null, null, null], [null, null, null, null, null]];
-    let history = [];
+    const numPlayers = 5;
+    let teamResults = [Array(numPlayers).fill(null), Array(numPlayers).fill(null)];
 
-    function startGame() {
-      const teamA = document.getElementById('teamA').value;
-      const teamB = document.getElementById('teamB').value;
-
-      document.getElementById('gameArea').innerHTML = `
-        <h2>${teamA} vs ${teamB}</h2>
-        <table>
-          <tr><th>ทีม</th><th>ผู้เล่น 1</th><th>ผู้เล่น 2</th><th>ผู้เล่น 3</th><th>ผู้เล่น 4</th><th>ผู้เล่น 5</th></tr>
-          <tr class="player">
-            <td>${teamA}</td>
-            ${[0,1,2,3,4].map(i => `<td><span id="resultA${i}"></span><br>
-              <button class="result-button" onclick="recordResult(0, ${i}, true)">GOAL</button>
-              <button class="result-button" onclick="recordResult(0, ${i}, false)">NO GOAL</button></td>`).join('')}
-          </tr>
-          <tr class="player">
-            <td>${teamB}</td>
-            ${[0,1,2,3,4].map(i => `<td><span id="resultB${i}"></span><br>
-              <button class="result-button" onclick="recordResult(1, ${i}, true)">GOAL</button>
-              <button class="result-button" onclick="recordResult(1, ${i}, false)">NO GOAL</button></td>`).join('')}
-          </tr>
-        </table>
-      `;
-
-      results = [[null, null, null, null, null], [null, null, null, null, null]];
-      updateSummary();
+    function updateTable() {
+      const teamNames = [
+        document.getElementById("teamA").value,
+        document.getElementById("teamB").value
+      ];
+      let html = "";
+      for (let i = 0; i < numPlayers; i++) {
+        for (let t = 0; t < 2; t++) {
+          html += `<tr class="player">
+                    <td>${teamNames[t]}</td>
+                    <td>Player ${i + 1}</td>
+                    <td>
+                      <button class="result-button" onclick="recordResult(${t}, ${i}, true)">✅</button>
+                      <button class="result-button" onclick="recordResult(${t}, ${i}, false)">❌</button>
+                      <span id="result${t}${i}">${teamResults[t][i] === true ? '✅' : teamResults[t][i] === false ? '❌' : ''}</span>
+                    </td>
+                  </tr>`;
+        }
+      }
+      document.getElementById("scoreTable").innerHTML = html;
+      updateScoreSummary();
     }
 
-    function recordResult(teamIndex, playerIndex, isGoal) {
-      results[teamIndex][playerIndex] = isGoal;
-      const spanId = `result${teamIndex === 0 ? 'A' : 'B'}${playerIndex}`;
-      document.getElementById(spanId).textContent = isGoal ? '✅' : '❌';
-      updateSummary();
+    function recordResult(team, player, result) {
+      teamResults[team][player] = result;
+      updateTable();
     }
 
-    function updateSummary() {
-      const scoreA = results[0].filter(r => r === true).length;
-      const scoreB = results[1].filter(r => r === true).length;
-      const teamA = document.getElementById('teamA').value;
-      const teamB = document.getElementById('teamB').value;
-      document.getElementById('summary').textContent = `สรุปคะแนน: ทีม ${teamA} ${scoreA} : ${scoreB} ทีม ${teamB}`;
+    function updateScoreSummary() {
+      const scores = teamResults.map(team => team.filter(r => r === true).length);
+      const names = [
+        document.getElementById("teamA").value,
+        document.getElementById("teamB").value
+      ];
+      document.getElementById("scoreSummary").textContent = `สรุปคะแนน: ${names[0]} ${scores[0]} : ${scores[1]} ${names[1]}`;
     }
 
     function confirmResult() {
-      const scoreA = results[0].filter(r => r === true).length;
-      const scoreB = results[1].filter(r => r === true).length;
-      const teamA = document.getElementById('teamA').value;
-      const teamB = document.getElementById('teamB').value;
-      history.push(`▶️ ${teamA} ${scoreA} : ${scoreB} ${teamB}`);
-      document.getElementById('history').innerHTML = '<h3>สรุปผลการเเข่งขัน:</h3>' + history.map(h => `<div>${h}</div>`).join('');
+      const scores = teamResults.map(team => team.filter(r => r === true).length);
+      const names = [
+        document.getElementById("teamA").value,
+        document.getElementById("teamB").value
+      ];
+      const history = document.getElementById("historyList");
+      const li = document.createElement("li");
+      li.textContent = `${names[0]} ${scores[0]} : ${scores[1]} ${names[1]}`;
+      history.appendChild(li);
       resetGame();
     }
 
     function resetGame() {
-      results = [[null, null, null, null, null], [null, null, null, null, null]];
-      updateSummary();
-      const spans = document.querySelectorAll('span[id^="result"]');
-      spans.forEach(span => span.textContent = '');
+      teamResults = [Array(numPlayers).fill(null), Array(numPlayers).fill(null)];
+      updateTable();
     }
 
     function resetHistory() {
-      history = [];
-      document.getElementById('history').innerHTML = '';
+      document.getElementById("historyList").innerHTML = "";
     }
+
+    updateTable();
   </script>
 </body>
 </html>
